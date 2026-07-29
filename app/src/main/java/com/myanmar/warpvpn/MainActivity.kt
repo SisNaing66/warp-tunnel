@@ -704,12 +704,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 stopPingManager()
-                appendLog("Stopping WARP Tunnel...")
+                appendLog("Stopping SN Tulip Vpn...")
                 backend.setState(tunnel, com.wireguard.android.backend.Tunnel.State.DOWN, null)
 
                 withContext(Dispatchers.Main) {
-                    appendLog("Disconnected from WARP TUNNEL.")
-                    Toast.makeText(this@MainActivity, "WARP TUNNEL Disconnected", Toast.LENGTH_SHORT).show()
+                    appendLog("Disconnected from SN Tulip Vpn.")
+                    Toast.makeText(this@MainActivity, "SN Tulip Vpn Disconnected", Toast.LENGTH_SHORT).show()
                     resetUi()
                 }
             } catch (e: Exception) {
