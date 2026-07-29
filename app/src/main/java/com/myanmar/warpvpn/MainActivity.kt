@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity() {
         updateActiveServerName()
         
         // Initial log
-        appendLog("WARP TUNNEL App Started")
+        appendLog("SN Tulip Vpn App Started")
         appendLog("Ready to connect...")
         
         checkNotificationPermission()
@@ -681,7 +681,7 @@ class MainActivity : AppCompatActivity() {
                     btnConnectCard.setStrokeColor(Color.parseColor("#4ADE80"))
                     imgPower.setColorFilter(Color.parseColor("#4ADE80"))
 
-                    Toast.makeText(this@MainActivity, "WARP TUNNEL Connected Successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "SN Tulip Vpn Connected Successfully!", Toast.LENGTH_SHORT).show()
                     appendLog("✅ Connected to SN Tulip Vpn!")
 
                     notificationHelper.updateNotification("Measuring...")
