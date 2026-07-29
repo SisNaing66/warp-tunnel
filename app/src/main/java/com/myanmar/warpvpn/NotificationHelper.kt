@@ -55,8 +55,8 @@ class NotificationHelper(private val context: Context) {
         }
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("WARP TUNNEL")
-            .setContentText("WARP TUNNEL Active & Protected | $subText")
+            .setContentTitle("SN Tulip Vpn")
+            .setContentText("SN Tulip Vpn Active & Protected | $subText")
             .setSmallIcon(R.drawable.ic_launcher)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
