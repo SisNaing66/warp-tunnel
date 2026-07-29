@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:letterSpacing="0.2"
-                android:text="WARP TUNNEL"
+                android:text="SN Tulip Vpn"
                 android:textColor="?attr/colorOnBackground"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -207,7 +207,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
-                        android:text="🫠 Welcome from Warp Tunnel...\n"
+                        android:text="🫠 Welcome from SN Tulip Vpn...\n"
                         android:textColor="#4ADE80"
                         android:textSize="12sp" />
                 </ScrollView>
