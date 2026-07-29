@@ -682,7 +682,7 @@ class MainActivity : AppCompatActivity() {
                     imgPower.setColorFilter(Color.parseColor("#4ADE80"))
 
                     Toast.makeText(this@MainActivity, "WARP TUNNEL Connected Successfully!", Toast.LENGTH_SHORT).show()
-                    appendLog("✅ Connected to WARP TUNNEL!")
+                    appendLog("✅ Connected to SN Tulip Vpn!")
 
                     notificationHelper.updateNotification("Measuring...")
 
