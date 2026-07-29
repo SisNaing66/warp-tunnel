@@ -17,7 +17,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:roundIcon="@drawable/ic_launcher_round"
-        android:label="Warp Tunnel"
+        android:label="SN Tulip Vpn"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
