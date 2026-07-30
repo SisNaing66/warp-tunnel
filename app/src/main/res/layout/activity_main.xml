@@ -43,35 +43,79 @@
                 android:textStyle="bold" />
         </RelativeLayout>
 
+        <!-- Device ID Row (Added for Easy Copy) -->
+        <LinearLayout
+            android:id="@+id/layoutDeviceId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/topBar"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/card_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device ID: "
+                android:textColor="@color/text_secondary_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDeviceId"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="Loading..."
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/btnCopyDeviceId"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/copy"
+                app:tint="@color/primary_color" />
+        </LinearLayout>
+
         <!-- Big Circular Connect Button -->
         <LinearLayout
             android:id="@+id/layoutPower"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/topBar"
+            android:layout_below="@id/layoutDeviceId"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="25dp"
             android:gravity="center"
             android:orientation="vertical">
 
             <!-- Glowing Ripple Effect Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnConnectCard"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 app:cardBackgroundColor="@color/card_bg_dark"
-                app:cardCornerRadius="80dp"
+                app:cardCornerRadius="75dp"
                 app:cardElevation="12dp"
                 app:strokeColor="@color/primary_color"
                 app:strokeWidth="2dp">
 
                 <ImageView
                     android:id="@+id/imgPower"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_lock_power_snapshot"
                     app:tint="@color/primary_color" />
@@ -81,7 +125,7 @@
                 android:id="@+id/tvStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="18dp"
                 android:letterSpacing="0.15"
                 android:text="TAP TO CONNECT"
                 android:textColor="@color/text_secondary_dark"
@@ -95,12 +139,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/layoutPower"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="25dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="@color/card_bg_dark"
-            app:cardCornerRadius="24dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="4dp"
             app:strokeColor="@color/stroke_dark"
             app:strokeWidth="1dp">
@@ -110,11 +154,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="18dp">
+                android:padding="16dp">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     android:src="@drawable/ic_menu_compass"
                     app:tint="@color/primary_color" />
 
@@ -122,16 +166,16 @@
                     android:id="@+id/tvServerName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="14dp"
                     android:layout_weight="1"
                     android:text="Select Server..."
                     android:textColor="@color/text_primary_dark"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@android:drawable/arrow_down_float"
                     app:tint="@color/text_secondary_dark" />
             </LinearLayout>
@@ -143,9 +187,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/cardServer"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             app:cardBackgroundColor="#0D1526"
-            app:cardCornerRadius="24dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="4dp"
             app:strokeColor="@color/stroke_dark"
             app:strokeWidth="1dp">
@@ -154,7 +198,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
                 <!-- Header with Action Icons -->
                 <RelativeLayout
@@ -168,7 +212,7 @@
                         android:letterSpacing="0.1"
                         android:text="CONNECTION LOGS"
                         android:textColor="@color/text_secondary_dark"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <!-- Copy & Clear Icons -->
@@ -181,8 +225,8 @@
 
                         <ImageView
                             android:id="@+id/btnClearLogs"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:focusable="true"
@@ -192,9 +236,9 @@
 
                         <ImageView
                             android:id="@+id/btnCopyLogs"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:layout_marginStart="16dp"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_marginStart="12dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:focusable="true"
@@ -207,7 +251,7 @@
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="12dp">
 
                     <TextView
                         android:id="@+id/tvLogs"
@@ -216,7 +260,7 @@
                         android:fontFamily="monospace"
                         android:text="🫠 Welcome to SN Tulip Vpn...\n"
                         android:textColor="#4ADE80"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
                 </ScrollView>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -227,3 +271,4 @@
     <include layout="@layout/nav_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
+
