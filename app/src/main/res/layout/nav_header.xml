@@ -1,25 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="#0F172A"
+    android:layout_height="wrap_content"
+    android:minHeight="200dp"
+    android:background="@color/bg_dark"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="20dp">
 
+    <!-- App Name -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SN Tulip Vpn"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary_dark"
         android:textSize="22sp"
         android:textStyle="bold" />
 
+    <!-- App Version -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="v1.0.0"
-        android:textColor="#94A3B8"
+        android:textColor="@color/text_secondary_dark"
         android:textSize="12sp" />
+
+    <!-- Device ID Box -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/card_bg_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.05"
+                android:text="YOUR DEVICE ID"
+                android:textColor="@color/primary_color"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDeviceId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="monospace"
+                android:text="Loading..."
+                android:textColor="@color/text_primary_dark"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Copy Button -->
+        <ImageView
+            android:id="@+id/btnCopyDeviceId"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="6dp"
+            android:src="@drawable/copy"
+            app:tint="@color/text_secondary_dark" />
+
+    </LinearLayout>
+
 </LinearLayout>
