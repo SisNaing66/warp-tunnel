@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_color">#38BDF8</color>
-    
-    <!-- Light Mode Colors -->
-    <color name="bg_light">#F8FAFC</color>
-    <color name="card_bg_light">#FFFFFF</color>
-    <color name="stroke_light">#E2E8F0</color>
-    <color name="text_primary_light">#0F172A</color>
-    <color name="text_secondary_light">#64748B</color>
+    <!-- အဓိက အရောင် (လိုဂိုနဲ့ လိုက်ဖက်မယ့် တောက်ပသော အပြာရောင်) -->
+    <color name="primary_color">#00B4D8</color>
 
-    <!-- Dark Mode Colors -->
-    <color name="bg_dark">#0F172A</color>
-    <color name="card_bg_dark">#1E293B</color>
-    <color name="stroke_dark">#334155</color>
-    <color name="text_primary_dark">#FFFFFF</color>
-    <color name="text_secondary_dark">#94A3B8</color>
+    <!-- Light Mode အရောင်များ (လင်းပြီး ရှင်းသန့်နေမယ့် ပုံစံ) -->
+    <color name="bg_light">#F0F4F8</color>
+    <color name="card_bg_light">#FFFFFF</color>
+    <color name="stroke_light">#D1E3F8</color>
+    <color name="text_primary_light">#1A202C</color>
+    <color name="text_secondary_light">#718096</color>
+
+    <!-- Dark Mode အရောင်များ (ခပ်မိုက်မိုက် Deep Blue/Dark ပုံစံ) -->
+    <color name="bg_dark">#0B1120</color>
+    <color name="card_bg_dark">#172136</color>
+    <color name="stroke_dark">#2A3A59</color>
+    <color name="text_primary_dark">#F7FAFC</color>
+    <color name="text_secondary_dark">#A0AEC0</color>
 </resources>
