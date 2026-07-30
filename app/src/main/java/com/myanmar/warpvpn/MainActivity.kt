@@ -11,7 +11,7 @@ import android.net.Uri
 import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings // 💡 Device ID အတွက် အသစ်ထည့်ထားသည်
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,8 +46,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
 import java.net.InetAddress
+import java.net.URL
 import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -62,6 +66,9 @@ data class ConfigModel(
 )
 
 class MainActivity : AppCompatActivity() {
+
+    // 💡 အရေးကြီး - ဒီနေရာမှာ အစ်ကို့ VPS ရဲ့ IP ကို ပြောင်းထည့်ပေးပါ။ (ဥပမာ - http://123.45.67.89:8000)
+    private val VPS_API_URL = "http://104.207.93.17:8000"
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var btnMenu: ImageView
@@ -91,7 +98,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnRestoreDefaults: MaterialButton
     private lateinit var tvTelegram: TextView
 
-    // 💡 Device ID ပြရန်နှင့် Copy ကူးရန် Variable များ အသစ်ထည့်ထားသည်
     private lateinit var tvDeviceId: TextView
     private lateinit var btnCopyDeviceId: ImageView
     private var myDeviceId: String = ""
@@ -181,11 +187,9 @@ class MainActivity : AppCompatActivity() {
         btnRestoreDefaults = findViewById(R.id.btnRestoreDefaults)
         tvTelegram = findViewById(R.id.tvTelegram)
 
-        // 💡 Device ID View များကို ချိတ်ဆက်ခြင်း
         tvDeviceId = findViewById(R.id.tvDeviceId)
         btnCopyDeviceId = findViewById(R.id.btnCopyDeviceId)
 
-        // 💡 ဖုန်း၏ Device ID အစစ်ကို ဆွဲထုတ်ပြီး TextView တွင် ပြသခြင်း
         myDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = myDeviceId
 
@@ -207,16 +211,13 @@ class MainActivity : AppCompatActivity() {
             else -> rbDnsDefault.isChecked = true
         }
 
-        // Show/hide logs
         cardLogs.visibility = if (switchLogs.isChecked) View.VISIBLE else View.GONE
 
-        // Update UI
         updateActiveServerName()
         
-        // Initial log
         appendLog("SN Tulip Vpn App Started")
+        appendLog("Device ID: $myDeviceId")
         appendLog("Ready to connect...")
-        appendLog("Device ID Loaded: $myDeviceId") // 💡 Log ထဲမှာပါ Device ID ကို ပြပေးထားသည်
         
         checkNotificationPermission()
     }
@@ -246,7 +247,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 💡 Device ID ကို Copy ကူးမည့် ခလုတ် နှိပ်သောအခါ
         btnCopyDeviceId.setOnClickListener {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Device ID", myDeviceId)
@@ -330,6 +330,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showRestoreDefaultsDialog() {
+        // ... (Keep existing code)
         val dialog = AlertDialog.Builder(this, R.style.DarkCustomDialog)
             .setTitle("Restore Defaults")
             .setMessage("Are you sure you want to reset all settings, configs, and preferences to default?")
@@ -361,6 +362,7 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun showExitDialog() {
+        // ... (Keep existing code)
         val dialog = AlertDialog.Builder(this, R.style.DarkCustomDialog)
             .setTitle("Exit WARP TUNNEL?")
             .setMessage("Choose whether to minimize to background or exit the app completely.")
@@ -383,6 +385,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setEngineSelectionUI(isCfDirect: Boolean) {
+        // ... (Keep existing code)
         if (isCfDirect) {
             rbEngineCf.isChecked = true
             rbEngineCustom.isChecked = false
@@ -408,6 +411,10 @@ class MainActivity : AppCompatActivity() {
             tvServerName.text = "WARP Auto Clean IP [Auto]"
         }
     }
+
+    // ... (Keep existing showSelectLocationBottomSheet, showImportConfigDialog, parseWireGuardUri, buildRawConfig, extractEndpoint, applyCustomDnsToConfig functions)
+    // To save space, I assume you have them untouched as before. 
+    // I will include them here so the code works out of the box.
 
     private fun showSelectLocationBottomSheet() {
         val bottomSheet = BottomSheetDialog(this)
@@ -550,19 +557,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun buildRawConfig(
-        privateKey: String,
-        endpoint: String,
-        address: String,
-        publicKey: String,
-        mtu: String
-    ): String {
+    private fun buildRawConfig(privateKey: String, endpoint: String, address: String, publicKey: String, mtu: String): String {
         val formattedAddress = if (address.contains(",") && !address.contains(", ")) {
             address.replace(",", ", ")
         } else {
             address
         }
-        
         return """
             [Interface]
             PrivateKey = $privateKey
@@ -610,13 +610,73 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    // 💡 API ကို လှမ်းစစ်မည့် Function အသစ်
+    private suspend fun checkDeviceAccess(deviceId: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val url = URL("$VPS_API_URL/check_device/$deviceId")
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            connection.connectTimeout = 5000 // 5 seconds wait
+            connection.readTimeout = 5000
+
+            if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                val inputStream = connection.inputStream
+                val reader = BufferedReader(InputStreamReader(inputStream))
+                val response = reader.readText()
+                reader.close()
+
+                val jsonObject = JSONObject(response)
+                val status = jsonObject.optString("status")
+
+                if (status == "active") {
+                    return@withContext true
+                } else {
+                    val msg = jsonObject.optString("message", "Access Denied!")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@MainActivity, "Access Denied: $msg", Toast.LENGTH_LONG).show()
+                        appendLog("❌ API Check Failed: $msg")
+                    }
+                    return@withContext false
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    appendLog("❌ API Server Error: Code ${connection.responseCode}")
+                    Toast.makeText(this@MainActivity, "Server Error!", Toast.LENGTH_SHORT).show()
+                }
+                return@withContext false
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                appendLog("❌ Network Error: Could not reach API server.")
+                Toast.makeText(this@MainActivity, "Network Error!", Toast.LENGTH_SHORT).show()
+            }
+            return@withContext false
+        }
+    }
     
+    // 💡 Connect လုပ်သည့် အပိုင်း (API စစ်ဆေးခြင်း ပါဝင်လာပါပြီ)
     private fun prepareAndConnectVpn() {
-        tvStatus.text = "CONNECTING..."
+        tvStatus.text = "VERIFYING..."
         btnConnectCard.setStrokeColor(Color.parseColor("#F59E0B"))
-        appendLog("Preparing VPN connection...")
+        appendLog("Verifying Device ID with Server...")
 
         lifecycleScope.launch(Dispatchers.IO) {
+            // ၁။ API ကို အရင်လှမ်းစစ်မည်
+            val isAuthorized = checkDeviceAccess(myDeviceId)
+            if (!isAuthorized) {
+                withContext(Dispatchers.Main) {
+                    resetUi()
+                }
+                return@launch // ခွင့်ပြုချက်မရှိလျှင် ဆက်မလုပ်တော့ပါ
+            }
+
+            // ၂။ ခွင့်ပြုချက်ရှိမှသာ VPN ဆက်ချိတ်မည်
+            withContext(Dispatchers.Main) {
+                tvStatus.text = "CONNECTING..."
+                appendLog("✅ Device Authorized. Preparing VPN connection...")
+            }
+
             try {
                 var selectedModel = getSelectedConfig()
                 var configStr: String
