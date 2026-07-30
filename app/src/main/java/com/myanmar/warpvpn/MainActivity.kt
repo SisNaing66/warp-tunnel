@@ -186,7 +186,6 @@ class MainActivity : AppCompatActivity() {
 
         myDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
-        // Safe finding for Device ID view anywhere in layout
         tvDeviceId = findViewById(R.id.tvDeviceId)
         btnCopyDeviceId = findViewById(R.id.btnCopyDeviceId)
 
@@ -664,3 +663,4 @@ class MainActivity : AppCompatActivity() {
         override fun onStateChange(newState: com.wireguard.android.backend.Tunnel.State) {}
     }
 }
+
