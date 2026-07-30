@@ -11,6 +11,7 @@ import android.net.Uri
 import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings // 💡 Device ID အတွက် အသစ်ထည့်ထားသည်
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -90,6 +91,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnRestoreDefaults: MaterialButton
     private lateinit var tvTelegram: TextView
 
+    // 💡 Device ID ပြရန်နှင့် Copy ကူးရန် Variable များ အသစ်ထည့်ထားသည်
+    private lateinit var tvDeviceId: TextView
+    private lateinit var btnCopyDeviceId: ImageView
+    private var myDeviceId: String = ""
+
     private var isConnected = false
     private var pingJob: Job? = null
     private var pendingConfigStr: String? = null
@@ -98,7 +104,6 @@ class MainActivity : AppCompatActivity() {
     private val tunnel = WgTunnel()
     private val notificationHelper by lazy { NotificationHelper(this) }
 
-    // 💡 Notification Permission Launcher (Android 13+)
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -176,6 +181,14 @@ class MainActivity : AppCompatActivity() {
         btnRestoreDefaults = findViewById(R.id.btnRestoreDefaults)
         tvTelegram = findViewById(R.id.tvTelegram)
 
+        // 💡 Device ID View များကို ချိတ်ဆက်ခြင်း
+        tvDeviceId = findViewById(R.id.tvDeviceId)
+        btnCopyDeviceId = findViewById(R.id.btnCopyDeviceId)
+
+        // 💡 ဖုန်း၏ Device ID အစစ်ကို ဆွဲထုတ်ပြီး TextView တွင် ပြသခြင်း
+        myDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        tvDeviceId.text = myDeviceId
+
         // Load saved preferences
         switchDarkMode.isChecked = isDark
         switchLogs.isChecked = prefs.getBoolean("SHOW_LOGS", true)
@@ -203,6 +216,7 @@ class MainActivity : AppCompatActivity() {
         // Initial log
         appendLog("SN Tulip Vpn App Started")
         appendLog("Ready to connect...")
+        appendLog("Device ID Loaded: $myDeviceId") // 💡 Log ထဲမှာပါ Device ID ကို ပြပေးထားသည်
         
         checkNotificationPermission()
     }
@@ -230,6 +244,14 @@ class MainActivity : AppCompatActivity() {
             } else {
                 disconnectVpn()
             }
+        }
+
+        // 💡 Device ID ကို Copy ကူးမည့် ခလုတ် နှိပ်သောအခါ
+        btnCopyDeviceId.setOnClickListener {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Device ID", myDeviceId)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(this, "Device ID Copied!", Toast.LENGTH_SHORT).show()
         }
 
         cardServer.setOnClickListener {
@@ -897,3 +919,4 @@ class MainActivity : AppCompatActivity() {
         override fun onStateChange(newState: com.wireguard.android.backend.Tunnel.State) {}
     }
 }
+
