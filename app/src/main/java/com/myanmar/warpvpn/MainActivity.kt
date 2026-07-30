@@ -67,7 +67,7 @@ data class ConfigModel(
 
 class MainActivity : AppCompatActivity() {
 
-    // 💡 VPS API IP (Added by user)
+    // 💡 VPS API IP
     private val VPS_API_URL = "http://104.207.93.17:8000"
 
     private lateinit var drawerLayout: DrawerLayout
@@ -187,16 +187,38 @@ class MainActivity : AppCompatActivity() {
         btnRestoreDefaults = findViewById(R.id.btnRestoreDefaults)
         tvTelegram = findViewById(R.id.tvTelegram)
 
-        // 💡 App Crash တာကို ဖြေရှင်းထားသည့် Code အပိုင်း (Navigation Header ကနေ လှမ်းယူခြင်း)
-        val navigationView = findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
-        if (navigationView != null && navigationView.headerCount > 0) {
-            val headerView = navigationView.getHeaderView(0)
-            tvDeviceId = headerView.findViewById(R.id.tvDeviceId)
-            btnCopyDeviceId = headerView.findViewById(R.id.btnCopyDeviceId)
-        } else {
-            // Fallback (If layout differs)
-            tvDeviceId = findViewById(R.id.tvDeviceId)
-            btnCopyDeviceId = findViewById(R.id.btnCopyDeviceId)
+        // 💡 App Crash တာနဲ့ Build Fail တာကို လုံးဝ ရှင်းပေးထားသည့် Auto Search Code အပိုင်း
+        var isHeaderFound = false
+        for (i in 0 until drawerLayout.childCount) {
+            val child = drawerLayout.getChildAt(i)
+            if (child is com.google.android.material.navigation.NavigationView) {
+                if (child.headerCount > 0) {
+                    val headerView = child.getHeaderView(0)
+                    val tv = headerView.findViewById<TextView>(R.id.tvDeviceId)
+                    val btn = headerView.findViewById<ImageView>(R.id.btnCopyDeviceId)
+                    
+                    if (tv != null) {
+                        tvDeviceId = tv
+                        isHeaderFound = true
+                    }
+                    if (btn != null) {
+                        btnCopyDeviceId = btn
+                    }
+                }
+                break
+            }
+        }
+
+        if (!isHeaderFound) {
+            val mainTv = findViewById<TextView>(R.id.tvDeviceId)
+            val mainBtn = findViewById<ImageView>(R.id.btnCopyDeviceId)
+            
+            if (mainTv != null) {
+                tvDeviceId = mainTv
+            }
+            if (mainBtn != null) {
+                btnCopyDeviceId = mainBtn
+            }
         }
 
         myDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
