@@ -67,7 +67,7 @@ data class ConfigModel(
 
 class MainActivity : AppCompatActivity() {
 
-    // 💡 အရေးကြီး - ဒီနေရာမှာ အစ်ကို့ VPS ရဲ့ IP ကို ပြောင်းထည့်ပေးပါ။ (ဥပမာ - http://123.45.67.89:8000)
+    // 💡 VPS API IP (Added by user)
     private val VPS_API_URL = "http://104.207.93.17:8000"
 
     private lateinit var drawerLayout: DrawerLayout
@@ -187,11 +187,23 @@ class MainActivity : AppCompatActivity() {
         btnRestoreDefaults = findViewById(R.id.btnRestoreDefaults)
         tvTelegram = findViewById(R.id.tvTelegram)
 
-        tvDeviceId = findViewById(R.id.tvDeviceId)
-        btnCopyDeviceId = findViewById(R.id.btnCopyDeviceId)
+        // 💡 App Crash တာကို ဖြေရှင်းထားသည့် Code အပိုင်း (Navigation Header ကနေ လှမ်းယူခြင်း)
+        val navigationView = findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+        if (navigationView != null && navigationView.headerCount > 0) {
+            val headerView = navigationView.getHeaderView(0)
+            tvDeviceId = headerView.findViewById(R.id.tvDeviceId)
+            btnCopyDeviceId = headerView.findViewById(R.id.btnCopyDeviceId)
+        } else {
+            // Fallback (If layout differs)
+            tvDeviceId = findViewById(R.id.tvDeviceId)
+            btnCopyDeviceId = findViewById(R.id.btnCopyDeviceId)
+        }
 
         myDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        tvDeviceId.text = myDeviceId
+        
+        if (::tvDeviceId.isInitialized) {
+            tvDeviceId.text = myDeviceId
+        }
 
         // Load saved preferences
         switchDarkMode.isChecked = isDark
@@ -247,11 +259,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        btnCopyDeviceId.setOnClickListener {
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Device ID", myDeviceId)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(this, "Device ID Copied!", Toast.LENGTH_SHORT).show()
+        if (::btnCopyDeviceId.isInitialized) {
+            btnCopyDeviceId.setOnClickListener {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Device ID", myDeviceId)
+                clipboard.setPrimaryClip(clip)
+                Toast.makeText(this, "Device ID Copied!", Toast.LENGTH_SHORT).show()
+            }
         }
 
         cardServer.setOnClickListener {
@@ -330,7 +344,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showRestoreDefaultsDialog() {
-        // ... (Keep existing code)
         val dialog = AlertDialog.Builder(this, R.style.DarkCustomDialog)
             .setTitle("Restore Defaults")
             .setMessage("Are you sure you want to reset all settings, configs, and preferences to default?")
@@ -362,7 +375,6 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun showExitDialog() {
-        // ... (Keep existing code)
         val dialog = AlertDialog.Builder(this, R.style.DarkCustomDialog)
             .setTitle("Exit WARP TUNNEL?")
             .setMessage("Choose whether to minimize to background or exit the app completely.")
@@ -385,7 +397,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setEngineSelectionUI(isCfDirect: Boolean) {
-        // ... (Keep existing code)
         if (isCfDirect) {
             rbEngineCf.isChecked = true
             rbEngineCustom.isChecked = false
@@ -411,10 +422,6 @@ class MainActivity : AppCompatActivity() {
             tvServerName.text = "WARP Auto Clean IP [Auto]"
         }
     }
-
-    // ... (Keep existing showSelectLocationBottomSheet, showImportConfigDialog, parseWireGuardUri, buildRawConfig, extractEndpoint, applyCustomDnsToConfig functions)
-    // To save space, I assume you have them untouched as before. 
-    // I will include them here so the code works out of the box.
 
     private fun showSelectLocationBottomSheet() {
         val bottomSheet = BottomSheetDialog(this)
@@ -611,13 +618,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 💡 API ကို လှမ်းစစ်မည့် Function အသစ်
     private suspend fun checkDeviceAccess(deviceId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val url = URL("$VPS_API_URL/check_device/$deviceId")
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
-            connection.connectTimeout = 5000 // 5 seconds wait
+            connection.connectTimeout = 5000 
             connection.readTimeout = 5000
 
             if (connection.responseCode == HttpURLConnection.HTTP_OK) {
@@ -655,23 +661,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    // 💡 Connect လုပ်သည့် အပိုင်း (API စစ်ဆေးခြင်း ပါဝင်လာပါပြီ)
     private fun prepareAndConnectVpn() {
         tvStatus.text = "VERIFYING..."
         btnConnectCard.setStrokeColor(Color.parseColor("#F59E0B"))
         appendLog("Verifying Device ID with Server...")
 
         lifecycleScope.launch(Dispatchers.IO) {
-            // ၁။ API ကို အရင်လှမ်းစစ်မည်
             val isAuthorized = checkDeviceAccess(myDeviceId)
             if (!isAuthorized) {
                 withContext(Dispatchers.Main) {
                     resetUi()
                 }
-                return@launch // ခွင့်ပြုချက်မရှိလျှင် ဆက်မလုပ်တော့ပါ
+                return@launch 
             }
 
-            // ၂။ ခွင့်ပြုချက်ရှိမှသာ VPN ဆက်ချိတ်မည်
             withContext(Dispatchers.Main) {
                 tvStatus.text = "CONNECTING..."
                 appendLog("✅ Device Authorized. Preparing VPN connection...")
@@ -857,8 +860,6 @@ class MainActivity : AppCompatActivity() {
         notificationHelper.cancelNotification()
     }
 
-    // ==================== Config Management ====================
-
     private fun getAllConfigs(): List<ConfigModel> {
         val prefs = getSharedPreferences("WARP_VPN_PREFS", Context.MODE_PRIVATE)
         val jsonStr = prefs.getString("CONFIG_LIST_JSON", "[]")
@@ -929,8 +930,6 @@ class MainActivity : AppCompatActivity() {
         prefs.edit().putString("CONFIG_LIST_JSON", array.toString()).apply()
     }
 
-    // ==================== Config Adapter ====================
-
     class ConfigAdapter(
         private val list: List<ConfigModel>,
         private val onItemClick: (ConfigModel) -> Unit,
@@ -971,8 +970,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun getItemCount(): Int = list.size
     }
-
-    // ==================== WgTunnel ====================
 
     class WgTunnel : com.wireguard.android.backend.Tunnel {
         override fun getName(): String = "WARPTunnel"
